@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import TodoItem from './TodoItem';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 class App extends Component {
 
@@ -8,6 +8,7 @@ class App extends Component {
 
         this.getTodos = this.getTodos.bind(this);
         this.handleAddTodoChange = this.handleAddTodoChange.bind(this);
+        this.handleRemove = this.handleRemove.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
 
         this.state = {
@@ -34,9 +35,24 @@ class App extends Component {
         this.setState({ newTodo: e.target.value })
     }
 
+    handleRemove (index) {
+        let newItems = this.state.todos.slice();
+        newItems.splice(index, 1);
+        this.setState({ todos: newItems });
+    }
+
     getTodos () {
         return this.state.todos.map((todo, index) => {
-            return <TodoItem key={index.toString()} todo={todo} />
+            return (
+                <li className="todo-list__item" key={todo}>
+                    <span>{todo}</span>
+                    <input
+                        className="todo-list__checkbox"
+                        onChange={ () => this.handleRemove(index) }
+                        type="checkbox"
+                    />
+                </li>
+            );
         });
     }
 
@@ -44,9 +60,15 @@ class App extends Component {
         return (
             <div className="container">
                 <h1 className="todo-heading">To-dos</h1>
-                <ul className="todo-list">
+                <ReactCSSTransitionGroup
+                    component="ul"
+                    className="todo-list"
+                    transitionName="new-todo"
+                    transitionEnterTimeout={500}
+                    transitionLeaveTimeout={500}
+                >
                     { this.getTodos() }
-                </ul>
+                </ReactCSSTransitionGroup>
                 <div className="todo-controls">
                     <form onSubmit={this.handleSubmit}>
                         <input

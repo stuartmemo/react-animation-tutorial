@@ -32,6 +32,28 @@ body {
     padding: 1em 2em;
 }
 
+.todo-list__checkbox {
+    float: right;
+}
+
+.new-todo-enter {
+    opacity: 0.1;
+}
+
+.new-todo-enter-active {
+    opacity: 1;
+    transition: opacity 500ms ease-in;
+}
+
+.new-todo-leave {
+    opacity: 1;
+}
+
+.new-todo-leave.new-todo-leave-active {
+    opacity: 0.01;
+    transition: opacity 500ms ease-in;
+}
+
 .todo-controls {
     text-align: center;
 }
