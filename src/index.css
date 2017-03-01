@@ -37,7 +37,7 @@ body {
 }
 
 .new-todo-enter {
-    opacity: 0.1;
+    opacity: 0;
 }
 
 .new-todo-enter-active {
