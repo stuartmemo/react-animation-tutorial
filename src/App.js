@@ -13,7 +13,7 @@ class App extends Component {
 
         this.state = {
             newTodo: '',
-            todos: []
+            todos: ['Buy milk', 'Return library book', 'Think about life']
         };
     }
 
