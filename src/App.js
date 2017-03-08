@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import { Motion, spring } from 'react-motion';
 
 const uuid = require('uuid/v4');
 
@@ -26,7 +27,15 @@ class App extends Component {
                 },
                 {
                     id: uuid(),
+                    text: 'Go to post office'
+                },
+                {
+                    id: uuid(),
                     text: 'Think about life'
+                },
+                {
+                    id: uuid(),
+                    text: 'Lie down'
                 }
             ],
             mounted: false
@@ -54,14 +63,16 @@ class App extends Component {
         this.setState({ newTodo: e.target.value })
     }
 
-    handleRemove (id, todo) {
-        this[id].style.transitionDelay = '0ms';
+    handleRemove (id) {
+        this[id].style.transitionDelay = '1000ms';
 
         let newItems = this.state.todos.filter((todo) => {
             return todo.id !== id;
         })
 
-        this.setState({ todos: newItems });
+        this.setState({
+            todos: newItems
+        });
     }
 
     getTodos () {
@@ -73,11 +84,15 @@ class App extends Component {
             return (
                 <li className="todo-list__item" style={itemStyle} key={todo.id} ref={item => { this[todo.id] = item }}>
                     <span>{todo.text}</span>
-                    <input
-                        className="todo-list__checkbox"
-                        onChange={ () => this.handleRemove(todo.id, todo) }
-                        type="checkbox"
-                    />
+                     <Motion defaultStyle={{width: 18, height: 18}} style={ todo.completed ? {width: spring(0), height: spring(0)}:null}>
+                        {interpolatingStyle  => (
+                            <button
+                                className="todo-list__checkbox"
+                                style={interpolatingStyle}
+                                onClick={ () => this.handleRemove(todo.id, todo) }
+                            ></button>
+                        )}
+                    </Motion>
                 </li>
             );
         });
