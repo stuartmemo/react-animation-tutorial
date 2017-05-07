@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Motion, spring, presets } from 'react-motion';
 
 const uuid = require('uuid/v4');
 
@@ -29,7 +30,7 @@ class App extends Component {
                     text: 'Think about life'
                 }
             ],
-            mounted: false
+            shouldMoveInput: false
         };
     }
 
@@ -54,46 +55,45 @@ class App extends Component {
         this.setState({ newTodo: e.target.value })
     }
 
-    handleRemove (id, todo) {
-        this[id].style.transitionDelay = '0ms';
-
-        let newItems = this.state.todos.filter((todo) => {
+    handleRemove (id) {
+        let newTodos = this.state.todos.filter((todo) => {
             return todo.id !== id;
         })
 
-        this.setState({ todos: newItems });
+        this.setState({todos: newTodos });
     }
 
     getTodos () {
         return this.state.todos.map((todo, index) => {
-            let itemStyle = {
-                transitionDelay: (200 * index) + 'ms'
-            };
-
             return (
-                <li className="todo-list__item" style={itemStyle} key={todo.id} ref={item => { this[todo.id] = item }}>
-                    <span>{todo.text}</span>
-                    <input
-                        className="todo-list__checkbox"
-                        onChange={ () => this.handleRemove(todo.id, todo) }
-                        type="checkbox"
-                    />
-                </li>
+                <Motion defaultStyle={{left: -1000}} style={{left: spring(0, presets.gentle)}} key={todo.id}>
+                    {interpolatingStyle => (
+                        <li
+                            className="todo-list__item"
+                            key={todo.id}
+                            ref={item => { this[todo.id] = item }}
+                            style={interpolatingStyle}
+                        >
+                            <span>{todo.text}</span>
+                            <input
+                                className="todo-list__checkbox"
+                                onChange={ () => this.handleRemove(todo.id) }
+                                type="checkbox"
+                            />
+                        </li>
+                    )}
+                </Motion>
             );
         });
     }
 
     render() {
-        let todos;
-
-        if (this.state.mounted) {
-            todos = this.getTodos();
-        }
+        let todos = this.getTodos();
 
         return (
             <div className="container">
                 <h1 className="todo-heading">To-dos</h1>
-                <ReactCSSTransitionGroup
+                <CSSTransitionGroup
                     component="ul"
                     className="todo-list"
                     transitionName="new-todo"
@@ -101,7 +101,7 @@ class App extends Component {
                     transitionLeaveTimeout={500}
                 >
                     { todos }
-                </ReactCSSTransitionGroup>
+                </CSSTransitionGroup>
                 <div className="todo-controls">
                     <form onSubmit={this.handleSubmit}>
                         <input
@@ -118,9 +118,6 @@ class App extends Component {
         );
     }
 
-    componentDidMount () {
-        this.setState({ mounted: true });
-    }
 }
 
 export default App;
